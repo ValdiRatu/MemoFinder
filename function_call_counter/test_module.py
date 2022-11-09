@@ -36,5 +36,3 @@ def fizzbuzz(n):
 
 if __name__ == "__main__":
     fib(20)
-    binary_search([1, 2, 3, 4, 5, 6, 7, 8, 9, 10], 11)
-    fizzbuzz(30)
