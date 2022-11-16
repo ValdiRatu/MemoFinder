@@ -1,37 +1,45 @@
 import os
 import sys
-from ast import parse
-from ast_manipulators import ModuleImporter, FunctionInserter
-from output_dto import FunctionCallInfo, FunctionCallerInfoEncoder
-from inspect import getargvalues, getsource, getframeinfo
+from ast import parse, fix_missing_locations
+from ast_manipulators import ModuleImporter, FunctionInserter, ReturnModifier
+from output_dto import FunctionCall, FunctionCallerInfoEncoder
+from inspect import getargvalues, getsource
 from collections import defaultdict
 import json
 import importlib
+from uuid import uuid4
 
-func_calls = defaultdict(lambda: FunctionCallInfo())
+func_calls = defaultdict(lambda: FunctionCall())
 
-def get_func_call_info(func, locals, caller_frame):
-    
-    # get a string representation of the current function call
+def get_function_call_string(func, current_frame):
+    args = getargvalues(current_frame)
     current_call_args = []
-    for key in locals:
-        current_call_args.append("{}={}".format(key, locals[key]))
-    current_func_call = "{}({})".format(func.__name__, ", ".join(current_call_args))
+    for key in args.args:
+        current_call_args.append("{}={}".format(key, args.locals[key]))
 
-    # get a string representation of the caller function
-    caller_func_args = []
-    caller_arg_vals = getargvalues(caller_frame)
-    for key in caller_arg_vals.args:
-        caller_func_args.append("{}={}".format(key, caller_arg_vals.locals[key]))
-    caller_frame_info = getframeinfo(caller_frame)
-    caller_func_call = "{}({})".format(caller_frame_info.function, ", ".join(caller_func_args))
-    
-    # update func_calls dictionary
-    calling_lines = func_calls[current_func_call].callers[caller_func_call].lines
-    if (not caller_frame_info.lineno in calling_lines):
-        calling_lines.append(caller_frame_info.lineno)
-    func_calls[current_func_call].callers[caller_func_call].times_called += 1
-    func_calls[current_func_call].total_times_called += 1
+    current_call_args.append("{}={}".format("__call_id__", hash(uuid4())))
+    return "{}({})".format(func.__name__, ", ".join(current_call_args))
+
+def get_caller_function_call_string(caller_frame):
+    caller_function = caller_frame.f_locals.get("__current_func_call__")
+
+    if caller_function is None:
+        return "<module>"
+    return caller_function
+
+def record_func_call(current_func_call: str, caller_func_call: str, caller_frame_info, ret_val):
+    func_calls[current_func_call] = FunctionCall(caller_func_call, caller_frame_info.lineno, ret_val)
+
+def count_function_calls(func_calls: defaultdict) -> defaultdict:
+    counts = defaultdict(lambda: 0)
+    for key in func_calls:
+        split_key = key.split("(")
+        func_name = split_key[0]
+        func_args = split_key[1].split(', ')[0: -1]     # remove the unique id
+        func_call = "{}({})".format(func_name, ", ".join(func_args))
+        counts[func_call] += 1
+
+    return counts
 
 if __name__ == "__main__":
     module_to_analyse = importlib.import_module("test_module")
@@ -40,10 +48,15 @@ if __name__ == "__main__":
     tree = parse(source_code)
     ModuleImporter().visit(tree)
     FunctionInserter().visit(tree)
+    modified_tree = fix_missing_locations(ReturnModifier().visit(tree))
 
-    exec(compile(tree, filename='<ast>', mode='exec'))
+    exec(compile(modified_tree, filename='<ast>', mode='exec'))
 
-    print(json.dumps(func_calls, indent=4, cls=FunctionCallerInfoEncoder))
+    function_call_counts = count_function_calls(func_calls)
+
+    response = {"function_calls": func_calls, "totals": function_call_counts}
+
+    print(json.dumps(response, indent=4, cls=FunctionCallerInfoEncoder))
 
     with open(os.path.join(sys.path[0], "func_calls.json"), 'w') as f:
-        json.dump(func_calls, f, indent=4, cls=FunctionCallerInfoEncoder)
+        json.dump(response, f, indent=4, cls=FunctionCallerInfoEncoder)
