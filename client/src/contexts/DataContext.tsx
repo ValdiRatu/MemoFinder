@@ -51,8 +51,8 @@ interface Signature {
 interface Insight {
   signature: string // signature of the method
   estimateTimeSaved: number // estimated time saved in milliseconds
-  memoizationScore: number //
-  lines: number[]
+  memoizationScore: number // memoization score
+  lines: number[] // line numbers where the signature is called
 }
 
 const DataContext = createContext({} as DataContextProps)
