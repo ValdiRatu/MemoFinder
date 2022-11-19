@@ -1,18 +1,19 @@
-import Editor from "@monaco-editor/react";
-import { useData } from "../contexts/DataContext";
+import Editor from '@monaco-editor/react'
+
+import { useData } from '../contexts/DataContext'
 
 export const CodeEditor = () => {
-    const { code, setCode } = useData();
+  const { code, setCode } = useData()
 
-    return (
-        <Editor
-            defaultLanguage="python"
-            defaultValue={code}
-            onChange={(value) => setCode(value || "")}
-            theme="light"
-            options={{
-                scrollBeyondLastLine: false
-            }}
-        />
-    );
+  return (
+    <Editor
+      defaultLanguage="python"
+      defaultValue={code}
+      onChange={(value) => setCode(value || '')}
+      theme="light"
+      options={{
+        scrollBeyondLastLine: false
+      }}
+    />
+  )
 }

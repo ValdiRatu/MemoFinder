@@ -1,39 +1,53 @@
-import { ReactDiagram } from "gojs-react";
-import * as go from "gojs";
-import { PackedLayout } from "gojs/extensionsJSM/PackedLayout";
-import { useData } from "../contexts/DataContext";
+import { Diagram, Node, Shape, TextBlock } from 'gojs'
+import { PackedLayout } from 'gojs/extensionsJSM/PackedLayout'
+import { ReactDiagram } from 'gojs-react'
+
+import { useData } from '../contexts/DataContext'
+
+class RectangularPackedLayout extends PackedLayout {
+  constructor() {
+    super()
+    this.packShape = PackedLayout.Rectangular
+    this.spacing = 25
+  }
+}
 
 export const Grid = () => {
-    const { ref, nodesDataArray } = useData();
+  const { ref, nodesDataArray } = useData()
 
-    const GridDiagram = () => {
-        const grid = new go.Diagram({
-            layout: new PackedLayout(),
-            allowDelete: false,
-            allowCopy: false,
-            allowInsert: false,
-            allowMove: false,
-            // DOCS: https://gojs.net/latest/extensionsJSM/PackedLayout.html
-            nodeTemplate: new go.Node("Auto")
-                .add(new go.Shape({ strokeWidth: 0 })
-                    .bind('width', 'width')
-                    .bind('height', 'height')
-                    .bind('fill', 'color'))
-                .add(new go.TextBlock({ margin: 10, font: "bold 14px sans-serif", stroke: '#333' })
-                    .bind("text", "label"))
-        });
-        // These properties exist, but TypeScript doesn't know about them for some reason. Ignore the errors for now.
-        // @ts-ignore
-        grid.layout.packShape = PackedLayout.Rectangular;
-        // @ts-ignore
-        grid.layout.spacing = 25;
-        return grid;
-    }
+  const GridDiagram = () => {
+    const grid = new Diagram({
+      layout: new RectangularPackedLayout(),
+      allowDelete: false,
+      allowCopy: false,
+      allowInsert: false,
+      allowMove: false,
+      // DOCS: https://gojs.net/latest/extensionsJSM/PackedLayout.html
+      nodeTemplate: new Node('Auto')
+        .add(
+          new Shape({ strokeWidth: 0 })
+            .bind('width', 'width')
+            .bind('height', 'height')
+            .bind('fill', 'color')
+        )
+        .add(
+          new TextBlock({
+            margin: 10,
+            font: 'bold 14px sans-serif',
+            stroke: '#333'
+          }).bind('text', 'label')
+        )
+    })
 
-    return <ReactDiagram
-        ref={ref}
-        divClassName='graph'
-        initDiagram={GridDiagram}
-        nodeDataArray={nodesDataArray}
+    return grid
+  }
+
+  return (
+    <ReactDiagram
+      ref={ref}
+      divClassName="graph"
+      initDiagram={GridDiagram}
+      nodeDataArray={nodesDataArray}
     />
+  )
 }

@@ -1,18 +1,18 @@
-import React from 'react';
-import ReactDOM from 'react-dom/client';
-import './index.css';
-import App from './App';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { DataProvider } from "./contexts/DataContext";
+import './index.css'
+import 'bootstrap/dist/css/bootstrap.min.css'
 
-const root = ReactDOM.createRoot(
-    document.getElementById('root') as HTMLElement
-);
+import React from 'react'
+import ReactDOM from 'react-dom/client'
+
+import App from './App'
+import { DataProvider } from './contexts/DataContext'
+
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 
 root.render(
-    <React.StrictMode>
-        <DataProvider>
-            <App/>
-        </DataProvider>
-    </React.StrictMode>
-);
+  <React.StrictMode>
+    <DataProvider>
+      <App />
+    </DataProvider>
+  </React.StrictMode>
+)
