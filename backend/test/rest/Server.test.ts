@@ -8,8 +8,7 @@ const baseApiURL = `localhost:${PORT}`
 
 const sanityCheck = () => request(baseApiURL).get('/')
 const getHello = () => request(baseApiURL).get('/hello')
-const postPython = (code: string) =>
-  request(baseApiURL).post('/python').send({ code })
+const postPython = (code: string) => request(baseApiURL).post('/python').send({ code })
 
 describe('server', () => {
   use(chaiHttp)

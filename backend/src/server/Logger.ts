@@ -6,9 +6,7 @@ export class Logger {
     const formattedDate = `${date.getHours()}:${date.getMinutes()}:${date.getSeconds()}`
     if (res.headersSent) {
       console.log(
-        `${chalk.blueBright(`[${formattedDate}]:`)} ${chalk.yellow(
-          `${req.method}:${req.url}`
-        )}`
+        `${chalk.blueBright(`[${formattedDate}]:`)} ${chalk.yellow(`${req.method}:${req.url}`)}`
       )
     } else {
       res.on('finish', () => {

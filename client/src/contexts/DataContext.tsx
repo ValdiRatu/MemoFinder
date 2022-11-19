@@ -1,13 +1,7 @@
 import { hsv } from 'color-convert'
 import { ObjectData } from 'gojs'
 import { ReactDiagram } from 'gojs-react'
-import React, {
-  createContext,
-  useContext,
-  useEffect,
-  useRef,
-  useState
-} from 'react'
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
 
 export enum GraphType {
   Tree = 'Tree',
@@ -63,9 +57,7 @@ export const DataProvider = ({ children }: any) => {
   const ref = useRef<ReactDiagram>(null)
   const [visualization, setVisualization] = useState<GraphType>(GraphType.Tree)
   const [nodesDataArray, setNodesDataArray] = useState<ObjectData[]>([])
-  const [linksDataArray, setLinksDataArray] = useState<
-    ObjectData[] | undefined
-  >([])
+  const [linksDataArray, setLinksDataArray] = useState<ObjectData[] | undefined>([])
   const [treeNodes, setTreeNodes] = useState<ObjectData[]>([])
   const [treeLinks, setTreeLinks] = useState<ObjectData[]>([])
   const [gridNodes, setGridNodes] = useState<ObjectData[]>([])

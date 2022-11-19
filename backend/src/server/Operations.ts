@@ -40,11 +40,7 @@ export const pythonPostOperation: IOperation = {
 
 const runPython = (sourceCode: string, scriptName: string): Promise<string> =>
   new Promise((resolve, reject) => {
-    const scriptPath = path.resolve(
-      '../',
-      'function_call_counter',
-      `${scriptName}.py`
-    )
+    const scriptPath = path.resolve('../', 'function_call_counter', `${scriptName}.py`)
     PythonShell.run(scriptPath, { args: [sourceCode] }, (err, results) => {
       if (err) {
         reject(err)

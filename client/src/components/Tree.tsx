@@ -19,11 +19,7 @@ export const Tree = () => {
       }),
       // DOCS: https://gojs.net/latest/intro/buildingObjects.html
       nodeTemplate: new go.Node('Auto')
-        .add(
-          new go.Shape('Rectangle', { strokeWidth: 1 }).bind(
-            new go.Binding('fill', 'color')
-          )
-        )
+        .add(new go.Shape('Rectangle', { strokeWidth: 1 }).bind(new go.Binding('fill', 'color')))
         .add(
           new go.TextBlock({
             margin: 10,

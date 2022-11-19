@@ -13,9 +13,7 @@ export class App {
         console.info('App::initServer() - started')
       })
       .catch((err: Error) => {
-        console.error(
-          `App::initServer() - error starting server: ${err.message}`
-        )
+        console.error(`App::initServer() - error starting server: ${err.message}`)
       })
   }
 }

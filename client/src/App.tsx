@@ -31,11 +31,7 @@ const App = () => {
               setVisualization(GraphType.Tree)
             }}
           />
-          <Button
-            variant="outline-danger"
-            className="run ms-3"
-            onClick={runCode}
-          >
+          <Button variant="outline-danger" className="run ms-3" onClick={runCode}>
             Run
           </Button>
         </div>
@@ -45,9 +41,7 @@ const App = () => {
           <Col className="px-0">
             <CodeEditor />
           </Col>
-          <Col className="px-0">
-            {visualization === GraphType.Tree ? <Tree /> : <Grid />}
-          </Col>
+          <Col className="px-0">{visualization === GraphType.Tree ? <Tree /> : <Grid />}</Col>
         </Row>
       </Container>
     </div>
