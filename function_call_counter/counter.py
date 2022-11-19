@@ -17,8 +17,8 @@ def get_function_call_string(func, current_frame):
     for key in args.args:
         current_call_args.append("{}={}".format(key, args.locals[key]))
 
-    current_call_args.append("{}={}".format("__call_id__", hash(uuid4())))
-    return "{}({})".format(func.__name__, ", ".join(current_call_args))
+    call_id = "{}={}".format("__call_id__", hash(uuid4()))
+    return "{}({})${}".format(func.__name__, ", ".join(current_call_args), call_id)
 
 def get_caller_function_call_string(caller_frame):
     caller_function = caller_frame.f_locals.get("__current_func_call__")
