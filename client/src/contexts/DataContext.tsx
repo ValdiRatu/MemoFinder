@@ -9,8 +9,8 @@ export enum GraphType {
 }
 
 interface DataContextProps {
-  code: string
-  setCode: (code: string) => void
+  data: Data
+  insights: Insight[]
   runCode: () => void
   ref: React.RefObject<ReactDiagram>
   nodesDataArray: ObjectData[]
@@ -48,12 +48,18 @@ interface Signature {
   }
 }
 
+interface Insight {
+  signature: string // signature of the method
+  estimateTimeSaved: number // estimated time saved in milliseconds
+  memoizationScore: number //
+  lines: number[]
+}
+
 const DataContext = createContext({} as DataContextProps)
 
 export const DataProvider = ({ children }: any) => {
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [data, setData] = useState<Data>({} as Data)
-  const [code, setCode] = useState(`def main():\n\tprint("Hello World!")`)
+  const [insights, setInsights] = useState<Insight[]>([])
   const ref = useRef<ReactDiagram>(null)
   const [visualization, setVisualization] = useState<GraphType>(GraphType.Tree)
   const [nodesDataArray, setNodesDataArray] = useState<ObjectData[]>([])
@@ -89,63 +95,83 @@ export const DataProvider = ({ children }: any) => {
           numInstances: 1,
           totalTime: 1700,
           instances: {
-            '0': { caller: '', line: 0, time: 1700 }
+            '0': { caller: '', line: -1, time: 1700 }
           }
         },
         'fib(n=5)': {
           numInstances: 1,
           totalTime: 1400,
           instances: {
-            '11': { caller: '0', line: 4, time: 1400, returnValue: 8 }
+            '11': { caller: '0', line: 6, time: 1400, returnValue: 8 }
           }
         },
         'fib(n=4)': {
           numInstances: 1,
           totalTime: 900,
           instances: {
-            '1': { caller: '11', line: 4, time: 900, returnValue: 5 }
+            '1': { caller: '11', line: 6, time: 900, returnValue: 5 }
           }
         },
         'fib(n=3)': {
           numInstances: 1,
           totalTime: 1000,
           instances: {
-            '2': { caller: '1', line: 4, time: 500, returnValue: 3 },
-            '12': { caller: '11', line: 4, time: 500, returnValue: 3 }
+            '2': { caller: '1', line: 6, time: 500, returnValue: 3 },
+            '12': { caller: '11', line: 6, time: 500, returnValue: 3 }
           }
         },
         'fib(n=2)': {
           numInstances: 2,
           totalTime: 900,
           instances: {
-            '3': { caller: '1', line: 4, time: 300, returnValue: 2 },
-            '4': { caller: '2', line: 4, time: 300, returnValue: 2 },
-            '13': { caller: '12', line: 4, time: 300, returnValue: 2 }
+            '3': { caller: '1', line: 6, time: 300, returnValue: 2 },
+            '4': { caller: '2', line: 6, time: 300, returnValue: 2 },
+            '13': { caller: '12', line: 6, time: 300, returnValue: 2 }
           }
         },
         'fib(n=1)': {
           numInstances: 3,
           totalTime: 500,
           instances: {
-            '5': { caller: '2', line: 1, time: 100, returnValue: 1 },
-            '6': { caller: '4', line: 1, time: 100, returnValue: 1 },
-            '7': { caller: '3', line: 1, time: 100, returnValue: 1 },
-            '14': { caller: '13', line: 1, time: 100, returnValue: 1 },
-            '15': { caller: '12', line: 1, time: 100, returnValue: 1 }
+            '5': { caller: '2', line: 6, time: 100, returnValue: 1 },
+            '6': { caller: '4', line: 6, time: 100, returnValue: 1 },
+            '7': { caller: '3', line: 6, time: 100, returnValue: 1 },
+            '14': { caller: '13', line: 6, time: 100, returnValue: 1 },
+            '15': { caller: '12', line: 61, time: 100, returnValue: 1 }
           }
         },
         'fib(n=0)': {
           numInstances: 2,
           totalTime: 300,
           instances: {
-            '8': { caller: '3', line: 2, time: 100, returnValue: 0 },
-            '9': { caller: '4', line: 3, time: 100, returnValue: 0 },
-            '16': { caller: '13', line: 2, time: 100, returnValue: 0 }
+            '8': { caller: '3', line: 6, time: 100, returnValue: 0 },
+            '9': { caller: '4', line: 6, time: 100, returnValue: 0 },
+            '16': { caller: '13', line: 6, time: 100, returnValue: 0 }
           }
         }
       }
     }
 
+    let insights: Insight[] = []
+    for (const signature in mockData.signatures) {
+      if (signature !== 'module') {
+        const signatureData = mockData.signatures[signature]
+        const { totalTime, numInstances } = signatureData
+        const averageTime = totalTime / numInstances
+        const lines = new Set(
+          Object.values(signatureData.instances).map((instance) => instance.line)
+        )
+        insights.push({
+          signature,
+          estimateTimeSaved: averageTime / 2, // mock
+          memoizationScore: numInstances * averageTime,
+          lines: Array.from(lines)
+        })
+      }
+    }
+
+    insights = insights.sort((a, b) => b.memoizationScore - a.memoizationScore)
+    setInsights(insights)
     setData(mockData)
 
     const treeNodes: ObjectData[] = []
@@ -206,8 +232,8 @@ export const DataProvider = ({ children }: any) => {
   return (
     <DataContext.Provider
       value={{
-        code,
-        setCode,
+        data,
+        insights,
         runCode,
         ref,
         nodesDataArray,

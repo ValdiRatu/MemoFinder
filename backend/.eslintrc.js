@@ -2,19 +2,19 @@
 module.exports = {
   env: {
     es2022: true,
-    node: true,
+    node: true
   },
   extends: [
     'airbnb-base',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
-    'prettier',
+    'prettier'
   ],
   ignorePatterns: ['**/dist/*', '**/node_modules/*'],
   parser: '@typescript-eslint/parser',
   parserOptions: {
     ecmaVersion: '2022',
-    sourceType: 'module',
+    sourceType: 'module'
   },
   plugins: ['@typescript-eslint', 'prettier', 'simple-import-sort'],
   rules: {
@@ -27,7 +27,7 @@ module.exports = {
     'prettier/prettier': 'error',
     'import/no-extraneous-dependencies': [
       'error',
-      { devDependencies: ['**/tests/**', '**/test/**'] },
+      { devDependencies: ['**/tests/**', '**/test/**'] }
     ],
     'no-console': 'off',
     'import/no-unresolved': 'off',
@@ -36,6 +36,6 @@ module.exports = {
     'no-restricted-exports': 'off',
     'no-param-reassign': 'off',
     'no-use-before-define': 'off',
-    'import/prefer-default-export': 'off',
-  },
-};
+    'import/prefer-default-export': 'off'
+  }
+}
