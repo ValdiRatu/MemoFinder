@@ -17,6 +17,16 @@ class ModuleImporter(ast.NodeTransformer):
         )
         node.body.insert(0, import_inspect)
 
+        # from timeit import default_timer
+        import_timeit = ast.ImportFrom(
+            module='timeit',
+            names=[
+                ast.alias(name='default_timer')
+            ],
+            level=0
+        )
+        node.body.insert(0, import_timeit)
+
         return ast.fix_missing_locations(node)
 
 """
@@ -29,13 +39,6 @@ class FunctionInserter(ast.NodeTransformer):
         # func
         func = ast.Name(id=node.name, ctx=ast.Load())
 
-        # locals()
-        locals = ast.Call(
-            func=ast.Name(id='locals', ctx=ast.Load()),
-            args=[],
-            keywords=[]
-        )
-
         # __current_frame__ = currentframe()
         __current_frame__ = ast.Assign(
             targets=[ast.Name(id="__current_frame__", ctx=ast.Store())],
@@ -47,7 +50,7 @@ class FunctionInserter(ast.NodeTransformer):
         )
         node.body.insert(0, __current_frame__)
 
-        # __current_func_call__ = get_callee_function_call_string(func, locals())
+        # __current_func_call__ = get_callee_function_call_string(func, __current_frame__)
         __current_func_call__ = ast.Assign(
             targets=[ast.Name(id="__current_func_call__", ctx=ast.Store())],
             value=ast.Call(
@@ -121,6 +124,16 @@ class ReturnModifier(ast.NodeTransformer):
             value=node.value
         )
 
+        # __end_timer__ = default_timer()
+        __end_timer__ = ast.Assign(
+            targets=[ast.Name(id="__end_timer__", ctx=ast.Store())],
+            value=ast.Call(
+                func=ast.Name(id="default_timer", ctx=ast.Load()),
+                args=[],
+                keywords=[]
+            )
+        )
+
         # record_func_call(__current_func_call__, __caller_func_call__, __caller_frame_info__, __ret_val__)
         record_func_call = ast.Expr(
             value=ast.Call(
@@ -129,7 +142,9 @@ class ReturnModifier(ast.NodeTransformer):
                     ast.Name(id='__current_func_call__', ctx=ast.Load()),
                     ast.Name(id='__caller_func_call__', ctx=ast.Load()),
                     ast.Name(id='__caller_frame_info__', ctx=ast.Load()),
-                    ast.Name(id='__ret_val__', ctx=ast.Load())
+                    ast.Name(id='__ret_val__', ctx=ast.Load()),
+                    ast.Name(id='__start_timer__', ctx=ast.Load()),
+                    ast.Name(id='__end_timer__', ctx=ast.Load())
                 ],
                 keywords=[]
             )
@@ -140,4 +155,4 @@ class ReturnModifier(ast.NodeTransformer):
             value=ast.Name(id="__ret_val__", ctx=ast.Load())
         )
 
-        return [__ret_val__, record_func_call, return_stmt]
+        return [__ret_val__, __end_timer__, record_func_call, return_stmt]

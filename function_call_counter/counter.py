@@ -1,6 +1,6 @@
 import os
 import sys
-from ast import parse, fix_missing_locations
+from ast import parse, fix_missing_locations, dump
 from ast_manipulators import ModuleImporter, FunctionInserter, ReturnModifier
 from output_dto import FunctionCall, FunctionCallerInfoEncoder
 from inspect import getargvalues, getsource
@@ -8,6 +8,9 @@ from collections import defaultdict
 import json
 import importlib
 from uuid import uuid4
+import astor
+from timeit import Timer
+from process_time import StartTimerInserter
 
 func_calls = defaultdict(lambda: FunctionCall())
 
@@ -27,28 +30,32 @@ def get_caller_function_call_string(caller_frame):
         return "<module>"
     return caller_function
 
-def record_func_call(current_func_call: str, caller_func_call: str, caller_frame_info, ret_val):
-    func_calls[current_func_call] = FunctionCall(caller_func_call, caller_frame_info.lineno, ret_val)
+def record_func_call(current_func_call: str, caller_func_call: str, caller_frame_info, ret_val, start_timer: Timer, end_timer: Timer):
+    func_calls[current_func_call] = FunctionCall(caller_func_call, caller_frame_info.lineno, ret_val, end_timer-start_timer)
 
 def count_function_calls(func_calls: defaultdict) -> defaultdict:
     counts = defaultdict(lambda: 0)
+    total_time = defaultdict(lambda: 0)
     for key in func_calls:
         split_key = key.split("(")
         func_name = split_key[0]
         func_args = split_key[1].split(', ')[0: -1]     # remove the unique id
         func_call = "{}({})".format(func_name, ", ".join(func_args))
         counts[func_call] += 1
+        total_time[func_call] += func_calls[key].__get_process_time__()
 
-    return counts
+    return {"number_of_calls":counts, "processing_time": total_time}
 
 if __name__ == "__main__":
     module_to_analyse = importlib.import_module("test_module")
     source_code = getsource(module_to_analyse)
 
     tree = parse(source_code)
+    StartTimerInserter().visit(tree)
     ModuleImporter().visit(tree)
     FunctionInserter().visit(tree)
     modified_tree = fix_missing_locations(ReturnModifier().visit(tree))
+    # print(astor.to_source(modified_tree)) # prints out modified code
 
     exec(compile(modified_tree, filename='<ast>', mode='exec'))
 
