@@ -6,12 +6,11 @@ from output_dto import FunctionCall, FunctionCallerInfoEncoder
 from inspect import getargvalues, getsource
 from collections import defaultdict
 import json
-import importlib
 from uuid import uuid4
-import astor
 from timeit import Timer
 from process_time import StartTimerInserter
 
+import importlib
 func_calls = defaultdict(lambda: FunctionCall())
 
 def get_function_call_string(func, current_frame):
@@ -47,8 +46,12 @@ def count_function_calls(func_calls: defaultdict) -> defaultdict:
     return {"number_of_calls":counts, "processing_time": total_time}
 
 if __name__ == "__main__":
-    module_to_analyse = importlib.import_module("test_module")
-    source_code = getsource(module_to_analyse)
+    source_code = sys.argv[1]
+    if (not source_code):
+        raise Exception("No source code passed")
+
+    # module_to_analyse = importlib.import_module("test_module")
+    # source_code = getsource(module_to_analyse)
 
     tree = parse(source_code)
     StartTimerInserter().visit(tree)

@@ -39,15 +39,15 @@ describe('server', () => {
 
   describe('python endpoint', () => {
     it('properly POST python', async () => {
-      // todo: change once we have finalized endpoint and python script
       const code = 'print("hello world")'
       const res = await postPython(code)
       expect(res).to.have.status(200)
-      expect(res.text).to.equal(`results: arg = ${code}`)
+      expect(res.body).to.have.property('result')
+      expect(res.body.result).to.have.property('graphData')
+      expect(res.body.result).to.have.property('memoizationdata')
     })
 
     it('fails to POST python', async () => {
-      // todo: change once we have finalized endpoint
       const res = await postPython('')
       expect(res).to.have.status(400)
       expect(res.body).to.have.property('error')

@@ -95,7 +95,7 @@ export const DataProvider = ({ children }: any) => {
           numInstances: 1,
           totalTime: 1700,
           instances: {
-            '0': { caller: '', line: -1, time: 1700 }
+            '0': { line: -1, time: 1700 }
           }
         },
         'fib(n=5)': {

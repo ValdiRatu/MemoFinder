@@ -3,7 +3,8 @@ import express, { Application } from 'express'
 import { Server as HTTPServer } from 'http'
 
 import { Logger } from './Logger'
-import { operations, OperationType } from './Operations'
+import { operations } from './operations'
+import { OperationType } from './operations/types'
 
 // server class based on CPSC 310 (2022 FALL) server starter code
 export class Server {
@@ -16,6 +17,30 @@ export class Server {
 
     this.registerMiddlewares()
     this.registerRoutes()
+  }
+
+  private registerMiddlewares(): void {
+    this.expressApp.use(express.json())
+    this.expressApp.use(cors())
+
+    // logging middleware
+    this.expressApp.use(Logger.endpointLogger())
+  }
+
+  private registerRoutes(): void {
+    for (const { type, path, func } of operations) {
+      switch (type) {
+        case OperationType.Get:
+          this.expressApp.get(path, func)
+          break
+        case OperationType.Post:
+          this.expressApp.post(path, func)
+          break
+        case OperationType.Del:
+          this.expressApp.delete(path, func)
+          break
+      }
+    }
   }
 
   public start(): Promise<void> {
@@ -51,32 +76,5 @@ export class Server {
         })
       }
     })
-  }
-
-  private registerMiddlewares(): void {
-    this.expressApp.use(express.json())
-    this.expressApp.use(cors())
-
-    // logging middleware
-    this.expressApp.use(Logger.endpointLogger())
-  }
-
-  private registerRoutes(): void {
-    this.expressApp.get('/', (req, res) => {
-      res.send('server is live')
-    })
-    for (const { type, path, func } of operations) {
-      switch (type) {
-        case OperationType.Get:
-          this.expressApp.get(path, func)
-          break
-        case OperationType.Post:
-          this.expressApp.post(path, func)
-          break
-        case OperationType.Del:
-          this.expressApp.delete(path, func)
-          break
-      }
-    }
   }
 }
