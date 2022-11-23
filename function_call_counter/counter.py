@@ -36,10 +36,8 @@ def count_function_calls(func_calls: defaultdict) -> defaultdict:
     counts = defaultdict(lambda: 0)
     total_time = defaultdict(lambda: 0)
     for key in func_calls:
-        split_key = key.split("(")
-        func_name = split_key[0]
-        func_args = split_key[1].split(', ')[0: -1]     # remove the unique id
-        func_call = "{}({})".format(func_name, ", ".join(func_args))
+        split_key = key.split("$")
+        func_call = split_key[0]
         counts[func_call] += 1
         total_time[func_call] += func_calls[key].__get_process_time__()
 

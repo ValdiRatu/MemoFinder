@@ -2,7 +2,7 @@ import ast
 from ast_manipulators import ModuleImporter, FunctionInserter, ReturnModifier
 from inspect import getsource
 import importlib
-import astor
+
 
 """
 Class to insert timeit at the beginning of function definition
