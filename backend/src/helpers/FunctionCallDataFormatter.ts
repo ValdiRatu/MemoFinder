@@ -1,4 +1,4 @@
-// these interfaces are coupled their corresponding interface in the client
+// these interfaces are coupled their corresponding interface in the frontend
 export interface IFormattedData {
   metaData: IMetaDeta
   signatures: Record<string, ISignature>
@@ -24,6 +24,7 @@ export interface IInstance {
 }
 
 const MODULE = 'module'
+
 export class FunctionCallDataFormatter {
   public static formatFunctionCallData(rawFunctionCallData: any): IFormattedData {
     const { function_calls: functionCalls, totals } = rawFunctionCallData
@@ -63,12 +64,14 @@ export class FunctionCallDataFormatter {
       }
     }
 
-    const moduleTotalTime = Object.values(signatures).flatMap((signature) => Object.values(signature.instances)).reduce((sum, instance) => {
-      if (instance.caller === MODULE) {
-        return sum + instance.time
-      } 
-      return sum
-    }, 0)
+    const moduleTotalTime = Object.values(signatures)
+      .flatMap((signature) => Object.values(signature.instances))
+      .reduce((sum, instance) => {
+        if (instance.caller === MODULE) {
+          return sum + instance.time
+        }
+        return sum
+      }, 0)
 
     signatures[MODULE] = {
       numInstances: 1,

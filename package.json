@@ -1,7 +1,7 @@
 {
   "scripts": {
-    "install:all": "cd client && yarn install && cd ../backend && yarn install",
-    "lint": "cd client && yarn lint && cd ../backend && yarn lint"
+    "install:all": "cd frontend && yarn install && cd ../backend && yarn install",
+    "lint": "cd frontend && yarn lint && cd ../backend && yarn lint"
   },
   "license": "MIT"
 }

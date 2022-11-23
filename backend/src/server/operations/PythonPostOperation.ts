@@ -22,9 +22,9 @@ export const pythonFunctionCallCountOperation: IOperation = {
       const rawData = JSON.parse(readFileSync(pathToFile, 'utf8'))
 
       const graphData = FunctionCallDataFormatter.formatFunctionCallData(rawData)
-      const memoizationdata = MemoizationFinder.findMemiozations(graphData)
+      const memoizationData = MemoizationFinder.findMemiozations(graphData)
 
-      res.status(200).json({ result: { graphData, memoizationdata } })
+      res.status(200).json({ result: { graphData, memoizationData } })
     } catch (err: any) {
       res.status(400).json({ error: err.message })
     }

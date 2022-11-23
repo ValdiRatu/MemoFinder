@@ -35,7 +35,7 @@ export const Tree = () => {
         .add(new go.Shape({ toArrow: 'Standard', stroke: null, scale: 1 }))
         .add(
           new go.TextBlock({
-            segmentOffset: new go.Point(0, 15),
+            segmentOffset: new go.Point(0, 20),
             font: '12px sans-serif',
             stroke: '#333'
           }).bind('text', 'label')

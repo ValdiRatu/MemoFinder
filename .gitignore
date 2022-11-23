@@ -2,3 +2,5 @@ __pycache__/
 func_calls.json
 node_modules/
 .dist/
+.idea
+.vscode

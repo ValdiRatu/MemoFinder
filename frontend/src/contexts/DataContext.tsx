@@ -1,0 +1,194 @@
+import { hsv } from 'color-convert'
+import { ObjectData } from 'gojs'
+import { ReactDiagram } from 'gojs-react'
+import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
+
+export enum GraphType {
+  Tree = 'Tree',
+  Grid = 'Grid'
+}
+
+interface DataContextProps {
+  data: Data
+  memResults: MemoizationResult[]
+  runCode: () => void
+  ref: React.RefObject<ReactDiagram>
+  nodesDataArray: ObjectData[]
+  linksDataArray: ObjectData[] | undefined
+  visualization: GraphType
+  setVisualization: (visualization: GraphType) => void
+  code: string
+  setCode: (code: string) => void
+}
+
+interface Data {
+  metaData: MetaData // information about the overall on a high level
+  signatures: {
+    [signature: string]: Signature // signature is the method name + parameters: fib(n=18)
+  }
+}
+
+interface MetaData {
+  runtime: number // runtime of the program in milliseconds, same as time for module (root)
+  root: string // signature of the root method
+  // total number of instances in the tree, equal to Object.values(signatures).reduce((acc, signature) => acc + signature.numInstances, 0)
+  // if the number of signatures is too large, we won't create the nodes and links for the tree visualization
+  totalInstances: number
+}
+
+interface Signature {
+  numInstances: number // number of times the signature is called, equal to Object.keys(instances).length
+  totalTime: number // total time spent in this method in milliseconds, equal to Object.values(instances).reduce((acc, curr) => acc + curr.time, 0)
+  instances: {
+    [id: string]: Instance
+  }
+}
+
+interface Instance {
+  // represents the id of the instance, unique for all function calls
+  caller?: string // optional id of the caller, undefined if the function is root / standalone
+  line: number // line number of the call
+  time: number // time taken to execute this instance in milliseconds
+  returnValue?: any // optional return value of the function call
+}
+
+interface MemoizationResult {
+  signature: string // signature of the method
+  lineNumbers: number[] // line numbers where the method is called
+  numCalled: number // number of times the method is called
+  estimatedTimeSaved: number // estimated time saved in milliseconds
+  memoizationScore: number // memoization score
+}
+
+const DataContext = createContext({} as DataContextProps)
+
+export const DataProvider = ({ children }: any) => {
+  const [data, setData] = useState<Data>({} as Data)
+  const [memResults, setMemResults] = useState<MemoizationResult[]>([])
+  const ref = useRef<ReactDiagram>(null)
+  const [visualization, setVisualization] = useState<GraphType>(GraphType.Tree)
+  const [nodesDataArray, setNodesDataArray] = useState<ObjectData[]>([])
+  const [linksDataArray, setLinksDataArray] = useState<ObjectData[] | undefined>([])
+  const [treeNodes, setTreeNodes] = useState<ObjectData[]>([])
+  const [treeLinks, setTreeLinks] = useState<ObjectData[]>([])
+  const [gridNodes, setGridNodes] = useState<ObjectData[]>([])
+  const [code, setCode] = useState(
+    'def fib(n):\n\tif n == 0 or n == 1:\n\t\treturn 1\n\treturn fib(n - 1) + fib(n - 2)\n\nif __name__ == "__main__":\n\tfib(5)'
+  )
+
+  useEffect(() => {
+    ref.current?.clear()
+    if (visualization === GraphType.Tree) {
+      setNodesDataArray(treeNodes)
+      setLinksDataArray(treeLinks)
+    } else {
+      setNodesDataArray(gridNodes)
+      setLinksDataArray(undefined)
+    }
+  }, [visualization])
+
+  const runCode = async () => {
+    const response = await fetch('http://localhost:1234/python', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        code
+      })
+    })
+
+    const body = await response.json()
+
+    if (body.error) {
+      throw new Error(body.error)
+    }
+
+    const {
+      graphData,
+      memoizationData
+    }: {
+      graphData: Data
+      memoizationData: MemoizationResult[]
+    } = body.result
+
+    setMemResults(memoizationData)
+    setData(graphData)
+
+    const { signatures, metaData } = graphData
+    const treeNodes: ObjectData[] = []
+    const treeLinks: ObjectData[] = []
+    const gridNodes: ObjectData[] = []
+    const { runtime, root } = metaData
+    for (const signature in signatures) {
+      const { numInstances, totalTime, instances } = signatures[signature]
+      const timePercentage = totalTime === 0 ? 0 : totalTime / runtime
+      if (signature !== root) {
+        gridNodes.push({
+          key: signature,
+          label: signature,
+          numCalls: numInstances,
+          totalTime,
+          color: `#${hsv.hex([120 - (totalTime / runtime) * 120, 100, 100])}`,
+          // assign size based on the total time spent in the function
+          height: 100 + (totalTime / runtime) * 100,
+          width: 100 + (totalTime / runtime) * 100
+        })
+      }
+      for (const instanceId in instances) {
+        const { caller, time, line, returnValue } = instances[instanceId]
+        treeNodes.push({
+          key: instanceId,
+          label: signature,
+          line,
+          time,
+          totalTime,
+          returnValue,
+          // we can either use totalTime or time for color, totalTime gives a better representation of the time spent in the signature
+          color: `#${hsv.hex([120 - timePercentage * 120, 100, 100])}`
+        })
+        if (caller) {
+          treeLinks.push({
+            from: caller,
+            to: instanceId,
+            label: `line ${line}`
+          })
+        }
+      }
+    }
+
+    setTreeNodes(treeNodes)
+    setTreeLinks(treeLinks)
+    setGridNodes(gridNodes)
+
+    ref.current?.clear()
+    if (visualization === GraphType.Tree) {
+      setNodesDataArray(treeNodes)
+      setLinksDataArray(treeLinks)
+    } else {
+      setNodesDataArray(gridNodes)
+      setLinksDataArray(undefined)
+    }
+  }
+
+  return (
+    <DataContext.Provider
+      value={{
+        data,
+        memResults,
+        runCode,
+        ref,
+        nodesDataArray,
+        linksDataArray,
+        visualization,
+        setVisualization,
+        code,
+        setCode
+      }}
+    >
+      {children}
+    </DataContext.Provider>
+  )
+}
+
+export const useData = () => useContext(DataContext)

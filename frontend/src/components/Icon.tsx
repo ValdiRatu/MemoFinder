@@ -21,7 +21,12 @@ export const Icon = ({
 }: IconProps) => {
   const BootstrapIcon = icons[iconName]
   return (
-    <Button variant={variant} onClick={onClick} className={buttonClassname} active={active}>
+    <Button
+      variant={variant}
+      onClick={onClick}
+      className={`${buttonClassname} pb-2`}
+      active={active}
+    >
       <BootstrapIcon {...props} />
     </Button>
   )

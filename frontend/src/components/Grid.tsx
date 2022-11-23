@@ -8,6 +8,7 @@ class RectangularPackedLayout extends PackedLayout {
   constructor() {
     super()
     this.packShape = PackedLayout.Rectangular
+    this.sortMode = PackedLayout.Area
     this.spacing = 25
   }
 }
@@ -15,8 +16,8 @@ class RectangularPackedLayout extends PackedLayout {
 export const Grid = () => {
   const { ref, nodesDataArray } = useData()
 
-  const GridDiagram = () => {
-    const grid = new Diagram({
+  const GridDiagram = () =>
+    new Diagram({
       layout: new RectangularPackedLayout(),
       allowDelete: false,
       allowCopy: false,
@@ -38,9 +39,6 @@ export const Grid = () => {
           }).bind('text', 'label')
         )
     })
-
-    return grid
-  }
 
   return (
     <ReactDiagram

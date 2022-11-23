@@ -56,7 +56,6 @@ if __name__ == "__main__":
     ModuleImporter().visit(tree)
     FunctionInserter().visit(tree)
     modified_tree = fix_missing_locations(ReturnModifier().visit(tree))
-    # print(astor.to_source(modified_tree)) # prints out modified code
 
     exec(compile(modified_tree, filename='<ast>', mode='exec'))
 
