@@ -63,10 +63,13 @@ export class FunctionCallDataFormatter {
       }
     }
 
-    const moduleTotalTime = Object.values(totals.processing_time).reduce(
-      (sum, time) => sum + time,
-      0
-    )
+    const moduleTotalTime = Object.values(signatures).flatMap((signature) => Object.values(signature.instances)).reduce((sum, instance) => {
+      if (instance.caller === MODULE) {
+        return sum + instance.time
+      } 
+      return sum
+    }, 0)
+
     signatures[MODULE] = {
       numInstances: 1,
       totalTime: moduleTotalTime,
