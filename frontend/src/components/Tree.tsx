@@ -2,6 +2,7 @@ import * as go from 'gojs'
 import { ReactDiagram } from 'gojs-react'
 
 import { useData } from '../contexts/DataContext'
+import { TableToolTip } from '../helpers/TableToolTip'
 
 export const Tree = () => {
   const { ref, nodesDataArray, linksDataArray } = useData()
@@ -14,11 +15,19 @@ export const Tree = () => {
       allowDelete: false,
       allowCopy: false,
       allowInsert: false,
+      'toolManager.hoverDelay': 100,
+      'toolManager.toolTipDuration': 20000,
       model: new go.GraphLinksModel({
         linkKeyProperty: 'key'
       }),
       // DOCS: https://gojs.net/latest/intro/buildingObjects.html
-      nodeTemplate: new go.Node('Auto')
+      nodeTemplate: new go.Node('Auto', {
+        toolTip: new TableToolTip('Auto')
+          .addCell(0, 0, 'time')
+          .addCell(0, 1, undefined, 'time', (time) => `${time} ms`)
+          .addCell(1, 0, 'return value')
+          .addCell(1, 1, undefined, 'returnValue', (rv) => (rv !== null ? rv : '-'))
+      })
         .add(new go.Shape('Rectangle', { strokeWidth: 1 }).bind(new go.Binding('fill', 'color')))
         .add(
           new go.TextBlock({

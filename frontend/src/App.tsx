@@ -3,8 +3,8 @@ import './App.css'
 import React, { useState } from 'react'
 import { Button, Col, Container, Row, Spinner } from 'react-bootstrap'
 
-import { CodeEditor, Grid, Icon, Tree } from './components'
-import { GraphType, useData } from './contexts/DataContext'
+import { CodeEditor, Grid, Icon, Tabular, Tree } from './components'
+import { useData, VisualizationType } from './contexts/DataContext'
 
 const App = () => {
   const { runCode, setVisualization, visualization } = useData()
@@ -22,6 +22,19 @@ const App = () => {
     setIsRunning(false)
   }
 
+  const renderVisualization = () => {
+    switch (visualization) {
+      case VisualizationType.Grid:
+        return <Grid />
+      case VisualizationType.Tree:
+        return <Tree />
+      case VisualizationType.Tabular:
+        return <Tabular />
+      default:
+        return null
+    }
+  }
+
   return (
     <div className="d-flex flex-column vh-100">
       <div className="text-bg-dark d-flex justify-content-between px-4 py-3 align-middle">
@@ -35,21 +48,30 @@ const App = () => {
             active={showCode}
           />
           <Icon
+            iconName="Table"
+            buttonClassname="ms-3"
+            variant="outline-danger"
+            active={visualization === VisualizationType.Tabular}
+            onClick={() => {
+              setVisualization(VisualizationType.Tabular)
+            }}
+          />
+          <Icon
             iconName="ColumnsGap"
             buttonClassname="ms-3"
             variant="outline-danger"
-            active={visualization === GraphType.Grid}
+            active={visualization === VisualizationType.Grid}
             onClick={() => {
-              setVisualization(GraphType.Grid)
+              setVisualization(VisualizationType.Grid)
             }}
           />
           <Icon
             iconName="Diagram3Fill"
             buttonClassname="ms-3"
             variant="outline-danger"
-            active={visualization === GraphType.Tree}
+            active={visualization === VisualizationType.Tree}
             onClick={() => {
-              setVisualization(GraphType.Tree)
+              setVisualization(VisualizationType.Tree)
             }}
           />
           <Button
@@ -79,7 +101,7 @@ const App = () => {
               </h4>
             </Col>
           ) : (
-            <Col className="px-0">{visualization === GraphType.Tree ? <Tree /> : <Grid />}</Col>
+            <Col className="px-0">{renderVisualization()}</Col>
           )}
         </Row>
       </Container>

@@ -7,3 +7,7 @@ button.run {
     height: 100%;
     width: 100%;
 }
+
+.editor {
+    border-right: 1px solid #ececec;
+}

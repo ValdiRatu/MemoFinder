@@ -3,9 +3,10 @@ import { ObjectData } from 'gojs'
 import { ReactDiagram } from 'gojs-react'
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
 
-export enum GraphType {
+export enum VisualizationType {
   Tree = 'Tree',
-  Grid = 'Grid'
+  Grid = 'Grid',
+  Tabular = 'Tabular'
 }
 
 interface DataContextProps {
@@ -15,8 +16,8 @@ interface DataContextProps {
   ref: React.RefObject<ReactDiagram>
   nodesDataArray: ObjectData[]
   linksDataArray: ObjectData[] | undefined
-  visualization: GraphType
-  setVisualization: (visualization: GraphType) => void
+  visualization: VisualizationType
+  setVisualization: (visualization: VisualizationType) => void
   code: string
   setCode: (code: string) => void
 }
@@ -66,7 +67,7 @@ export const DataProvider = ({ children }: any) => {
   const [data, setData] = useState<Data>({} as Data)
   const [memResults, setMemResults] = useState<MemoizationResult[]>([])
   const ref = useRef<ReactDiagram>(null)
-  const [visualization, setVisualization] = useState<GraphType>(GraphType.Tree)
+  const [visualization, setVisualization] = useState<VisualizationType>(VisualizationType.Tree)
   const [nodesDataArray, setNodesDataArray] = useState<ObjectData[]>([])
   const [linksDataArray, setLinksDataArray] = useState<ObjectData[] | undefined>([])
   const [treeNodes, setTreeNodes] = useState<ObjectData[]>([])
@@ -78,10 +79,10 @@ export const DataProvider = ({ children }: any) => {
 
   useEffect(() => {
     ref.current?.clear()
-    if (visualization === GraphType.Tree) {
+    if (visualization === VisualizationType.Tree) {
       setNodesDataArray(treeNodes)
       setLinksDataArray(treeLinks)
-    } else {
+    } else if (visualization === VisualizationType.Grid) {
       setNodesDataArray(gridNodes)
       setLinksDataArray(undefined)
     }
@@ -112,7 +113,13 @@ export const DataProvider = ({ children }: any) => {
       memoizationData: MemoizationResult[]
     } = body.result
 
-    setMemResults(memoizationData)
+    setMemResults(
+      memoizationData.map((result) => ({
+        ...result,
+        estimatedTimeSaved: Number((result.estimatedTimeSaved * 1000).toFixed(6)),
+        memoizationScore: Number(result.memoizationScore.toFixed(6))
+      }))
+    )
     setData(graphData)
 
     const { signatures, metaData } = graphData
@@ -120,15 +127,17 @@ export const DataProvider = ({ children }: any) => {
     const treeLinks: ObjectData[] = []
     const gridNodes: ObjectData[] = []
     const { runtime, root } = metaData
+    console.log(graphData)
     for (const signature in signatures) {
       const { numInstances, totalTime, instances } = signatures[signature]
+      const formattedTotalTime = (totalTime * 1000).toFixed(6)
       const timePercentage = totalTime === 0 ? 0 : totalTime / runtime
       if (signature !== root) {
         gridNodes.push({
           key: signature,
           label: signature,
           numCalls: numInstances,
-          totalTime,
+          totalTime: formattedTotalTime,
           color: `#${hsv.hex([120 - (totalTime / runtime) * 120, 100, 100])}`,
           // assign size based on the total time spent in the function
           height: 100 + (totalTime / runtime) * 100,
@@ -137,13 +146,14 @@ export const DataProvider = ({ children }: any) => {
       }
       for (const instanceId in instances) {
         const { caller, time, line, returnValue } = instances[instanceId]
+        const formattedTime = (time * 1000).toFixed(6)
         treeNodes.push({
           key: instanceId,
           label: signature,
           line,
-          time,
-          totalTime,
-          returnValue,
+          time: formattedTime,
+          totalTime: formattedTotalTime,
+          returnValue: returnValue !== undefined ? returnValue : null,
           // we can either use totalTime or time for color, totalTime gives a better representation of the time spent in the signature
           color: `#${hsv.hex([120 - timePercentage * 120, 100, 100])}`
         })
@@ -162,10 +172,10 @@ export const DataProvider = ({ children }: any) => {
     setGridNodes(gridNodes)
 
     ref.current?.clear()
-    if (visualization === GraphType.Tree) {
+    if (visualization === VisualizationType.Tree) {
       setNodesDataArray(treeNodes)
       setLinksDataArray(treeLinks)
-    } else {
+    } else if (visualization === VisualizationType.Grid) {
       setNodesDataArray(gridNodes)
       setLinksDataArray(undefined)
     }
