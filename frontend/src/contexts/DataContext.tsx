@@ -127,7 +127,6 @@ export const DataProvider = ({ children }: any) => {
     const treeLinks: ObjectData[] = []
     const gridNodes: ObjectData[] = []
     const { runtime, root } = metaData
-    console.log(graphData)
     for (const signature in signatures) {
       const { numInstances, totalTime, instances } = signatures[signature]
       const formattedTotalTime = (totalTime * 1000).toFixed(6)
