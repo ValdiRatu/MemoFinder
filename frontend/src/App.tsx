@@ -38,7 +38,7 @@ const App = () => {
   return (
     <div className="d-flex flex-column vh-100">
       <div className="text-bg-dark d-flex justify-content-between px-4 py-3 align-middle">
-        <h3 className="m-0 p-0">Project Name</h3>
+        <h3 className="m-0 p-0">MemoFinder</h3>
         <div className="d-flex">
           <Icon
             iconName="CodeSlash"
