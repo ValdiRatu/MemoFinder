@@ -33,7 +33,7 @@ export class FunctionCallDataFormatter {
       !totals ||
       !this.validateFunctionCallData(functionCalls) ||
       !this.validateTotals(totals) ||
-      typeof(returnUID) !== 'string'
+      typeof returnUID !== 'string'
     ) {
       throw new Error('Invalid function call data')
     }
