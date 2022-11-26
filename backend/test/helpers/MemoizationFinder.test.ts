@@ -42,23 +42,18 @@ describe(MemoizationFinder.name, () => {
       }
     })
 
-    const result = MemoizationFinder.findMemiozations(data,{timeUnitMultiplier:1})
-    
-    expect(result).to.eql([
-      {
-        signature: 'test(1)',
-        memoizationScore: 36,
-        numCalled: 3,
-        estimatedTimeSaved: 12,
-        lineNumbers: [1, 2]
-      },
-      {
-        signature: 'test(2)',
-        memoizationScore: 2,
-        numCalled: 2,
-        estimatedTimeSaved: 1,
-        lineNumbers: [1]
-      }
-    ])
+    const result = MemoizationFinder.findMemiozations(data, { timeUnitMultiplier: 1 })
+
+    expect(result[0].estimatedTimeSaved).to.equal(12)
+    expect(result[0].lineNumbers).to.deep.equal([1, 2])
+    expect(result[0].memoizationScore).to.be.a('number') // memoizationScore is subject to change
+    expect(result[0].numCalled).to.deep.equal([2, 1])
+    expect(result[0].signature).to.equal('test(1)')
+
+    expect(result[1].estimatedTimeSaved).to.equal(1)
+    expect(result[1].lineNumbers).to.deep.equal([1])
+    expect(result[1].memoizationScore).to.be.a('number') // memoizationScore is subject to change
+    expect(result[1].numCalled).to.deep.equal([2])
+    expect(result[1].signature).to.equal('test(2)')
   })
 })

@@ -169,7 +169,7 @@ describe(FunctionCallDataFormatter.name, () => {
           numInstances: 1,
           totalTime: 10,
           instances: {
-            module: { line: -1, time: 10 },
+            module: { line: -1, time: 10 }
           }
         },
         'test(1)': {

@@ -44,7 +44,7 @@ describe('server', () => {
       expect(res).to.have.status(200)
       expect(res.body).to.have.property('result')
       expect(res.body.result).to.have.property('graphData')
-      expect(res.body.result).to.have.property('memoizationdata')
+      expect(res.body.result).to.have.property('memoizationData')
     })
 
     it('fails to POST python', async () => {

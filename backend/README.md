@@ -80,7 +80,7 @@ interface IInstance {
 interface IMemoizationResult {
   signature: string
   lineNumbers: number[]
-  numCalled: number
+  numCalled: number[]
   estimatedTimeSaved: number
   memoizationScore: number
 }
