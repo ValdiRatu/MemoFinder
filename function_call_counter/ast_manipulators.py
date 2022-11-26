@@ -110,7 +110,6 @@ This class is used to transform return statements so that the return value is sa
 the function call information is recorded in the output of the instrumentation
 """
 class ReturnModifier(ast.NodeTransformer):
-
     def visit_Return(self, node: ast.Return) -> list:
         # do nothing for an empty return statement
         if node.value is None:
@@ -156,3 +155,26 @@ class ReturnModifier(ast.NodeTransformer):
         )
 
         return [__ret_val__, __end_timer__, record_func_call, return_stmt]
+
+class ReturnAdder(ast.NodeTransformer):
+    returnUID = None
+
+    def __init__(self, returnUID) -> None:
+        super().__init__()
+        self.returnUID = returnUID
+
+    def visit_FunctionDef(self, node: ast.FunctionDef) -> ast.FunctionDef:
+        # Check if return is present on LVL 1 depth of function def
+        returnPres = False
+        for i in node.body:
+            if type(i) == ast.Return:
+                returnPres = True
+                break
+        
+        if not returnPres:
+            dummyReturn = ast.Return(
+                value = ast.Constant(value=self.returnUID)
+            )
+            node.body.append(dummyReturn)
+
+        return ast.fix_missing_locations(node)

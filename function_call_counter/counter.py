@@ -1,7 +1,7 @@
 import os
 import sys
 from ast import parse, fix_missing_locations, dump
-from ast_manipulators import ModuleImporter, FunctionInserter, ReturnModifier
+from ast_manipulators import ModuleImporter, FunctionInserter, ReturnModifier, ReturnAdder
 from output_dto import FunctionCall, FunctionCallerInfoEncoder
 from inspect import getargvalues, getsource
 from collections import defaultdict
@@ -51,7 +51,10 @@ if __name__ == "__main__":
     # module_to_analyse = importlib.import_module("test_module")
     # source_code = getsource(module_to_analyse)
 
+    returnUID = "___{}___".format(uuid4())
+
     tree = parse(source_code)
+    ReturnAdder(returnUID).visit(tree)
     StartTimerInserter().visit(tree)
     ModuleImporter().visit(tree)
     FunctionInserter().visit(tree)
@@ -61,7 +64,7 @@ if __name__ == "__main__":
 
     function_call_counts = count_function_calls(func_calls)
 
-    response = {"function_calls": func_calls, "totals": function_call_counts}
+    response = {"function_calls": func_calls, "totals": function_call_counts, "returnUID": str(returnUID)}
 
     print(json.dumps(response, indent=4, cls=FunctionCallerInfoEncoder))
 
