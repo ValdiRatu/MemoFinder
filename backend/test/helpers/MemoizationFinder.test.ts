@@ -42,8 +42,8 @@ describe(MemoizationFinder.name, () => {
       }
     })
 
-    const result = MemoizationFinder.findMemiozations(data)
-
+    const result = MemoizationFinder.findMemiozations(data,{timeUnitMultiplier:1})
+    
     expect(result).to.eql([
       {
         signature: 'test(1)',
