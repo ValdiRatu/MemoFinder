@@ -4,6 +4,7 @@ import { FunctionCallDataFormatter } from '../../src/helpers/FunctionCallDataFor
 import { DummyObjectCreator } from '../DummyObjectCreator'
 
 describe(FunctionCallDataFormatter.name, () => {
+  const returnUID = 'returnUID'
   it('should throw an error if the input is invalid', () => {
     expect(() => FunctionCallDataFormatter.formatFunctionCallData({})).to.throw()
   })
@@ -14,7 +15,8 @@ describe(FunctionCallDataFormatter.name, () => {
       totals: {
         processing_time: {},
         number_of_calls: {}
-      }
+      },
+      returnUID: 'returnUID'
     })
     expect(result).to.deep.equal(DummyObjectCreator.createFormattedData())
   })
@@ -26,7 +28,7 @@ describe(FunctionCallDataFormatter.name, () => {
           caller: '<module>',
           lineno: 1,
           process_time: 1,
-          return_value: null
+          return_value: returnUID
         }
       },
       totals: {
@@ -36,7 +38,8 @@ describe(FunctionCallDataFormatter.name, () => {
         processing_time: {
           'test()': 1
         }
-      }
+      },
+      returnUID
     })
     expect(result).to.deep.equal({
       metaData: {
@@ -70,13 +73,13 @@ describe(FunctionCallDataFormatter.name, () => {
           caller: '<module>',
           lineno: 1,
           process_time: 6,
-          return_value: null
+          return_value: returnUID
         },
         'test(1)$2': {
           caller: 'test(1)$1',
           lineno: 2,
           process_time: 2,
-          return_value: null
+          return_value: returnUID
         },
         'test(2)$3': {
           caller: 'test(1)$2',
@@ -92,7 +95,8 @@ describe(FunctionCallDataFormatter.name, () => {
         processing_time: {
           'test()': 12
         }
-      }
+      },
+      returnUID
     })
     expect(result).to.deep.equal({
       metaData: {
@@ -134,19 +138,19 @@ describe(FunctionCallDataFormatter.name, () => {
           caller: '<module>',
           lineno: 1,
           process_time: 6,
-          return_value: null
+          return_value: returnUID
         },
         'test(1)$2': {
           caller: 'test(1)$1',
           lineno: 2,
           process_time: 2,
-          return_value: null
+          return_value: returnUID
         },
         'test(2)$3': {
           caller: '<module>',
           lineno: 1,
           process_time: 4,
-          return_value: null
+          return_value: 123
         }
       },
       totals: {
@@ -156,7 +160,8 @@ describe(FunctionCallDataFormatter.name, () => {
         processing_time: {
           'test()': 12
         }
-      }
+      },
+      returnUID
     })
     expect(result).to.deep.equal({
       metaData: {
@@ -184,7 +189,7 @@ describe(FunctionCallDataFormatter.name, () => {
           numInstances: 1,
           totalTime: 4,
           instances: {
-            '3': { caller: 'module', line: 1, time: 4, returnValue: undefined }
+            '3': { caller: 'module', line: 1, time: 4, returnValue: 123 }
           }
         }
       }

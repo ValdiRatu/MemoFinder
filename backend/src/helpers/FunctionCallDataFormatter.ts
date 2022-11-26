@@ -27,12 +27,13 @@ const MODULE = 'module'
 
 export class FunctionCallDataFormatter {
   public static formatFunctionCallData(rawFunctionCallData: any): IFormattedData {
-    const { function_calls: functionCalls, totals } = rawFunctionCallData
+    const { function_calls: functionCalls, totals, returnUID } = rawFunctionCallData
     if (
       !functionCalls ||
       !totals ||
       !this.validateFunctionCallData(functionCalls) ||
-      !this.validateTotals(totals)
+      !this.validateTotals(totals) ||
+      typeof(returnUID) !== 'string'
     ) {
       throw new Error('Invalid function call data')
     }
@@ -46,7 +47,7 @@ export class FunctionCallDataFormatter {
         caller: callerId === `<${MODULE}>` ? MODULE : callerId,
         line: rawInstance.lineno,
         time: rawInstance.process_time,
-        returnValue: rawInstance.return_value ?? undefined
+        returnValue: rawInstance.return_value === returnUID ? undefined : rawInstance.return_value
       }
 
       if (signatures[signature]) {
