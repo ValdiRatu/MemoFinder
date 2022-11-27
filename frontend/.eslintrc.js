@@ -39,7 +39,6 @@ module.exports = {
     'no-plusplus': 'off',
     '@typescript-eslint/no-namespace': 'off',
     'cypress/no-unnecessary-waiting': 'warn',
-    // unused exports are allowed in test files
     'cypress/no-unused-expressions': 'off'
   }
 }
