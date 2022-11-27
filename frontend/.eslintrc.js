@@ -7,7 +7,9 @@ module.exports = {
     'airbnb-base',
     'plugin:@typescript-eslint/eslint-recommended',
     'plugin:@typescript-eslint/recommended',
-    'prettier'
+    'prettier',
+    'plugin:cypress/recommended',
+    'plugin:chai-friendly/recommended'
   ],
   ignorePatterns: ['**/dist/*', '**/node_modules/*'],
   parser: '@typescript-eslint/parser',
@@ -15,7 +17,7 @@ module.exports = {
     ecmaVersion: '2022',
     sourceType: 'module'
   },
-  plugins: ['@typescript-eslint', 'prettier', 'simple-import-sort'],
+  plugins: ['@typescript-eslint', 'prettier', 'simple-import-sort', 'chai-friendly'],
   rules: {
     'guard-for-in': 'off',
     'no-restricted-syntax': 'off',
@@ -25,10 +27,7 @@ module.exports = {
     'simple-import-sort/imports': 'error',
     '@typescript-eslint/no-unused-vars': 'error',
     'prettier/prettier': 'error',
-    'import/no-extraneous-dependencies': [
-      'error',
-      { devDependencies: ['**/tests/**', '**/test/**'] }
-    ],
+    'import/no-extraneous-dependencies': ['error', { devDependencies: true }],
     'no-console': 'off',
     'import/no-unresolved': 'off',
     'import/extensions': 'off',
@@ -37,6 +36,10 @@ module.exports = {
     'no-param-reassign': 'off',
     'no-use-before-define': 'off',
     'import/prefer-default-export': 'off',
-    'no-plusplus': 'off'
+    'no-plusplus': 'off',
+    '@typescript-eslint/no-namespace': 'off',
+    'cypress/no-unnecessary-waiting': 'warn',
+    // unused exports are allowed in test files
+    'cypress/no-unused-expressions': 'off'
   }
 }

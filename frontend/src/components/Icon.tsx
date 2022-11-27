@@ -4,6 +4,7 @@ import { ButtonVariant } from 'react-bootstrap/types'
 import * as icons from 'react-bootstrap-icons'
 
 interface IconProps extends icons.IconProps {
+  id?: string
   variant?: ButtonVariant
   iconName: keyof typeof icons
   onClick?: () => void
@@ -12,6 +13,7 @@ interface IconProps extends icons.IconProps {
 }
 
 export const Icon = ({
+  id = '',
   variant,
   iconName,
   onClick,
@@ -22,6 +24,7 @@ export const Icon = ({
   const BootstrapIcon = icons[iconName]
   return (
     <Button
+      id={id}
       variant={variant}
       onClick={onClick}
       className={`${buttonClassname} pb-2`}

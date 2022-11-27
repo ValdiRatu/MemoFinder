@@ -4,11 +4,11 @@ import { Col, Table } from 'react-bootstrap'
 import { useData } from '../contexts/DataContext'
 
 export const Tabular = () => {
-  const { memResults } = useData()
+  const { memoResults } = useData()
 
   return (
     <>
-      {memResults.length > 0 ? (
+      {memoResults.length > 0 ? (
         <div className="p-3">
           <Table bordered hover>
             <thead>
@@ -21,7 +21,7 @@ export const Tabular = () => {
               </tr>
             </thead>
             <tbody>
-              {memResults.map(
+              {memoResults.map(
                 ({ estimatedTimeSaved, numCalled, lineNumbers, signature, memoizationScore }) => (
                   <tr key={signature}>
                     <td>{signature}</td>

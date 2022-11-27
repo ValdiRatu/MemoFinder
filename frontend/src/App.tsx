@@ -41,6 +41,7 @@ const App = () => {
         <h3 className="m-0 p-0">MemoFinder</h3>
         <div className="d-flex">
           <Icon
+            id="code-icon"
             iconName="CodeSlash"
             buttonClassname="ms-3"
             variant="outline-danger"
@@ -48,6 +49,7 @@ const App = () => {
             active={showCode}
           />
           <Icon
+            id="table-icon"
             iconName="Table"
             buttonClassname="ms-3"
             variant="outline-danger"
@@ -57,6 +59,7 @@ const App = () => {
             }}
           />
           <Icon
+            id="grid-icon"
             iconName="ColumnsGap"
             buttonClassname="ms-3"
             variant="outline-danger"
@@ -66,6 +69,7 @@ const App = () => {
             }}
           />
           <Icon
+            id="tree-icon"
             iconName="Diagram3Fill"
             buttonClassname="ms-3"
             variant="outline-danger"

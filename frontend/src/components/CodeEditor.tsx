@@ -4,12 +4,12 @@ import { useEffect } from 'react'
 import { useData } from '../contexts/DataContext'
 
 export const CodeEditor = () => {
-  const { code, setCode, memResults } = useData()
+  const { code, setCode, memoResults } = useData()
 
   useEffect(() => {
-    if (memResults.length > 0) {
+    if (memoResults.length > 0) {
       // memResults is sort by estimatedTimeSaved in descending order
-      const { lineNumbers } = memResults[0]
+      const { lineNumbers } = memoResults[0]
       // add message before each line in lines
       const codeLines = code.split('\n')
       for (let i = 0; i < codeLines.length; i++) {
@@ -20,7 +20,7 @@ export const CodeEditor = () => {
       }
       setCode(codeLines.join('\n'))
     }
-  }, [memResults])
+  }, [memoResults])
 
   return (
     <Editor

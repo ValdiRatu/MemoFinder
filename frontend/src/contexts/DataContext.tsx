@@ -11,7 +11,7 @@ export enum VisualizationType {
 
 interface DataContextProps {
   data: Data
-  memResults: MemoizationResult[]
+  memoResults: MemoizationResult[]
   runCode: () => void
   ref: React.RefObject<ReactDiagram>
   nodesDataArray: ObjectData[]
@@ -22,7 +22,7 @@ interface DataContextProps {
   setCode: (code: string) => void
 }
 
-interface Data {
+export interface Data {
   metaData: MetaData // information about the overall on a high level
   signatures: {
     [signature: string]: Signature // signature is the method name + parameters: fib(n=18)
@@ -53,7 +53,7 @@ interface Instance {
   returnValue?: any // optional return value of the function call
 }
 
-interface MemoizationResult {
+export interface MemoizationResult {
   signature: string // signature of the method
   lineNumbers: number[] // line numbers where the method is called
   numCalled: number // number of times the method is called
@@ -65,7 +65,7 @@ const DataContext = createContext({} as DataContextProps)
 
 export const DataProvider = ({ children }: any) => {
   const [data, setData] = useState<Data>({} as Data)
-  const [memResults, setMemResults] = useState<MemoizationResult[]>([])
+  const [memoResults, setMemoResults] = useState<MemoizationResult[]>([])
   const ref = useRef<ReactDiagram>(null)
   const [visualization, setVisualization] = useState<VisualizationType>(VisualizationType.Tree)
   const [nodesDataArray, setNodesDataArray] = useState<ObjectData[]>([])
@@ -113,7 +113,7 @@ export const DataProvider = ({ children }: any) => {
       memoizationData: MemoizationResult[]
     } = body.result
 
-    setMemResults(
+    setMemoResults(
       memoizationData.map((result) => ({
         ...result,
         estimatedTimeSaved: Number((result.estimatedTimeSaved * 1000).toFixed(6)),
@@ -178,13 +178,14 @@ export const DataProvider = ({ children }: any) => {
       setNodesDataArray(gridNodes)
       setLinksDataArray(undefined)
     }
+    console.log(JSON.stringify(treeLinks))
   }
 
   return (
     <DataContext.Provider
       value={{
         data,
-        memResults,
+        memoResults,
         runCode,
         ref,
         nodesDataArray,
