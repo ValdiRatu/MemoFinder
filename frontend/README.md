@@ -1,4 +1,4 @@
-# Getting Started with Create React App
+# MemoFinder
 
 This project was bootstrapped with [Create React App](https://github.com/facebook/create-react-app).
 
@@ -16,12 +16,14 @@ You will also see any lint errors in the console.
 
 ### `yarn cy:run`
 
-Runs Cypress tests in headless mode (browser is hidden, results are shown in terminal).\
+Runs Cypress tests in headless mode (browser is hidden, results are shown in terminal).
+
 **Expects backend to be running.**
 
 ### `yarn cy:open`
 
-Runs Cypress tests in interactive mode.\
+Runs Cypress tests in interactive mode.
+
 **Expects backend to be running.**
 
 ### `yarn build`
