@@ -3,6 +3,8 @@ import { ObjectData } from 'gojs'
 import { ReactDiagram } from 'gojs-react'
 import React, { createContext, useContext, useEffect, useRef, useState } from 'react'
 
+import { SERVER_URL } from '../constants/constants'
+
 export enum VisualizationType {
   Tree = 'Tree',
   Grid = 'Grid',
@@ -114,7 +116,7 @@ export const DataProvider = ({ children }: any) => {
     if (!code.includes('# we estimate that memoization or caching this function')) {
       setCodeBeforeAnalysis(code)
     }
-    const response = await fetch('http://localhost:1234/python', {
+    const response = await fetch(`${SERVER_URL}/python`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'
