@@ -78,6 +78,14 @@ interface IInstance {
 }
 
 interface IMemoizationResult {
+  funcName: string
+  isMemoized: boolean
+  signatureMemoizationResult: ISignatureMemoizationResult[]
+  memoizationScore: number
+  estimatedTimeSaved: number
+}
+
+interface ISignatureMemoizationResult {
   signature: string
   lineNumbers: number[]
   numCalled: number[]
