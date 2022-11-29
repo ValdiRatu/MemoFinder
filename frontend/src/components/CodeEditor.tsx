@@ -17,8 +17,7 @@ export const CodeEditor = () => {
       memoizationScore,
       lineNumber
     } of tableData) {
-      console.log(isMemoized, name, lineNumber)
-      if (isMemoized || numCalled <= 1 || estimatedTimeSaved <= 0 || memoizationScore <= 0) {
+      if (isMemoized || numCalled <= 1 || estimatedTimeSaved <= 0 || memoizationScore <= 0.05) {
         continue
       }
       const line = lineNumber - 1 + displacement

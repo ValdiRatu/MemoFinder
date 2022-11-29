@@ -17,15 +17,17 @@ export const Tabular = () => {
                 <th>Line number</th>
                 <th># times called</th>
                 <th>Estimated time saved (ms)</th>
-              </tr>
+                <th>Should Memoize?</th>
+            </tr>
             </thead>
             <tbody>
-              {filteredTableData.map(({ estimatedTimeSaved, numCalled, name, lineNumber }) => (
+              {filteredTableData.map(({ estimatedTimeSaved, numCalled, name, lineNumber, memoizationScore }) => (
                 <tr key={`${name}${lineNumber}`}>
                   <td>{name}</td>
                   <td>{lineNumber}</td>
                   <td>{numCalled}</td>
                   <td>{estimatedTimeSaved}</td>
+                  <td style={{ backgroundColor: memoizationScore > 0.05 ? '#d4edda' : '#f8d7da' }}>{memoizationScore > 0.05 ? 'Should memoize' : 'No need to memoize'}</td>
                 </tr>
               ))}
             </tbody>
