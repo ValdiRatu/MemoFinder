@@ -19,6 +19,7 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'prettier', 'simple-import-sort', 'chai-friendly'],
   rules: {
+    'no-continue': 'off',
     'guard-for-in': 'off',
     'no-restricted-syntax': 'off',
     'no-shadow': 'off',

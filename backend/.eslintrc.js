@@ -18,13 +18,19 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'prettier', 'simple-import-sort'],
   rules: {
+    'no-continue': 'off',
     'no-restricted-syntax': 'off',
     'no-shadow': 'off',
     'default-case': 'off',
     '@typescript-eslint/no-explicit-any': 'off',
     'simple-import-sort/imports': 'error',
     '@typescript-eslint/no-unused-vars': 'error',
-    'prettier/prettier': 'error',
+    'prettier/prettier': [
+      'error',
+      {
+        'endOfLine': 'auto'
+      }
+    ],
     'import/no-extraneous-dependencies': [
       'error',
       { devDependencies: ['**/tests/**', '**/test/**'] }

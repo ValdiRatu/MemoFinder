@@ -7,7 +7,7 @@ import { CodeEditor, Grid, Icon, Tabular, Tree } from './components'
 import { useData, VisualizationType } from './contexts/DataContext'
 
 const App = () => {
-  const { runCode, setVisualization, visualization } = useData()
+  const { runCode, setVisualization, visualization, codeBeforeAnalysis, setCode } = useData()
   const [showCode, setShowCode] = React.useState(true)
   const [error, setError] = useState('')
   const [isRunning, setIsRunning] = useState(false)
@@ -40,6 +40,14 @@ const App = () => {
       <div className="text-bg-dark d-flex justify-content-between px-4 py-3 align-middle">
         <h3 className="m-0 p-0">MemoFinder</h3>
         <div className="d-flex">
+          <Icon
+            id="reset-code-icon"
+            iconName="ArrowClockwise"
+            buttonClassname="ms-3"
+            variant="outline-danger"
+            onClick={() => setCode(codeBeforeAnalysis)}
+            disabled={codeBeforeAnalysis === ''}
+          />
           <Icon
             id="code-icon"
             iconName="CodeSlash"

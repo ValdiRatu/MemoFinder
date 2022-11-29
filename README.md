@@ -39,6 +39,7 @@ in the `./frontend` directory run the command;
 ```
 yarn start
 ```
+NOTE: If you run into issues with eslint asking you to delete `CR` then simply run `yarn lint` in the `./frontend` directory and try starting the client once again
 
 ## Testing the server
 

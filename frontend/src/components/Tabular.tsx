@@ -4,34 +4,30 @@ import { Col, Table } from 'react-bootstrap'
 import { useData } from '../contexts/DataContext'
 
 export const Tabular = () => {
-  const { memoResults } = useData()
-
+  const { tableData } = useData()
+  const filteredTableData = tableData.filter((row) => row.lineNumber !== -1)
   return (
     <>
-      {memoResults.length > 0 ? (
+      {filteredTableData.length > 0 ? (
         <div className="p-3">
           <Table bordered hover>
             <thead>
               <tr>
-                <th>Method signature</th>
-                <th>Line numbers</th>
+                <th>Method name</th>
+                <th>Line number</th>
                 <th># times called</th>
                 <th>Estimated time saved (ms)</th>
-                <th>Memoization score</th>
               </tr>
             </thead>
             <tbody>
-              {memoResults.map(
-                ({ estimatedTimeSaved, numCalled, lineNumbers, signature, memoizationScore }) => (
-                  <tr key={signature}>
-                    <td>{signature}</td>
-                    <td>{lineNumbers.join(', ')}</td>
-                    <td>{numCalled}</td>
-                    <td>{estimatedTimeSaved}</td>
-                    <td>{memoizationScore}</td>
-                  </tr>
-                )
-              )}
+              {filteredTableData.map(({ estimatedTimeSaved, numCalled, name, lineNumber }) => (
+                <tr key={`${name}${lineNumber}`}>
+                  <td>{name}</td>
+                  <td>{lineNumber}</td>
+                  <td>{numCalled}</td>
+                  <td>{estimatedTimeSaved}</td>
+                </tr>
+              ))}
             </tbody>
           </Table>
         </div>

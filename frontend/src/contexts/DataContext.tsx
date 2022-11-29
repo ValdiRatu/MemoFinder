@@ -11,7 +11,7 @@ export enum VisualizationType {
 
 interface DataContextProps {
   data: Data
-  memoResults: MemoizationResult[]
+  tableData: TableData[]
   runCode: () => void
   ref: React.RefObject<ReactDiagram>
   nodesDataArray: ObjectData[]
@@ -19,6 +19,7 @@ interface DataContextProps {
   visualization: VisualizationType
   setVisualization: (visualization: VisualizationType) => void
   code: string
+  codeBeforeAnalysis: string
   setCode: (code: string) => void
 }
 
@@ -53,19 +54,39 @@ interface Instance {
   returnValue?: any // optional return value of the function call
 }
 
+export interface MemoizationResult2 {
+  funcName: string
+  isMemoized: boolean
+  signatureMemoizationResult: MemoizationResult[]
+  memoizationScore: number
+  estimatedTimeSaved: number
+}
+
 export interface MemoizationResult {
   signature: string // signature of the method
   lineNumbers: number[] // line numbers where the method is called
-  numCalled: number // number of times the method is called
+  numCalled: number[] // number of times the method is called at each line number
   estimatedTimeSaved: number // estimated time saved in milliseconds
   memoizationScore: number // memoization score
+}
+
+// MemoizationResult grouped by method name and line number
+interface TableData {
+  name: string // name of the method
+  lineNumber: number // line number where the method is called
+  numCalled: number // number of times the method name is called for this line number
+  estimatedTimeSaved: number // estimated time saved in milliseconds'
+  memoizationScore: number // memoization score
+  isMemoized: boolean // whether the method is already memoized
 }
 
 const DataContext = createContext({} as DataContextProps)
 
 export const DataProvider = ({ children }: any) => {
   const [data, setData] = useState<Data>({} as Data)
-  const [memoResults, setMemoResults] = useState<MemoizationResult[]>([])
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [memoResults, setMemoResults] = useState<MemoizationResult2[]>([])
+  const [tableData, setTableData] = useState<TableData[]>([])
   const ref = useRef<ReactDiagram>(null)
   const [visualization, setVisualization] = useState<VisualizationType>(VisualizationType.Tree)
   const [nodesDataArray, setNodesDataArray] = useState<ObjectData[]>([])
@@ -73,6 +94,7 @@ export const DataProvider = ({ children }: any) => {
   const [treeNodes, setTreeNodes] = useState<ObjectData[]>([])
   const [treeLinks, setTreeLinks] = useState<ObjectData[]>([])
   const [gridNodes, setGridNodes] = useState<ObjectData[]>([])
+  const [codeBeforeAnalysis, setCodeBeforeAnalysis] = useState('')
   const [code, setCode] = useState(
     'def fib(n):\n\tif n == 0 or n == 1:\n\t\treturn 1\n\treturn fib(n - 1) + fib(n - 2)\n\nif __name__ == "__main__":\n\tfib(5)'
   )
@@ -89,6 +111,9 @@ export const DataProvider = ({ children }: any) => {
   }, [visualization])
 
   const runCode = async () => {
+    if (!code.includes('# we estimate that memoization or caching this function')) {
+      setCodeBeforeAnalysis(code)
+    }
     const response = await fetch('http://localhost:1234/python', {
       method: 'POST',
       headers: {
@@ -110,9 +135,45 @@ export const DataProvider = ({ children }: any) => {
       memoizationData
     }: {
       graphData: Data
-      memoizationData: MemoizationResult[]
+      memoizationData: MemoizationResult2[]
     } = body.result
 
+    const memoResultsGrouped: {
+      [name: string]: {
+        [lineNumber: number]: TableData
+      }
+    } = {}
+    for (const result of memoizationData) {
+      memoResultsGrouped[result.funcName] = {}
+      for (const signatureResult of result.signatureMemoizationResult) {
+        for (let i = 0; i < signatureResult.lineNumbers.length; i++) {
+          const lineNumber = signatureResult.lineNumbers[i]
+          const numCalled = signatureResult.numCalled[i]
+          if (!memoResultsGrouped[result.funcName][lineNumber]) {
+            memoResultsGrouped[result.funcName][lineNumber] = {
+              name: result.funcName,
+              lineNumber,
+              numCalled,
+              estimatedTimeSaved: result.estimatedTimeSaved,
+              memoizationScore: result.memoizationScore,
+              isMemoized: result.isMemoized
+            }
+          } else {
+            memoResultsGrouped[result.funcName][lineNumber].numCalled += numCalled
+          }
+        }
+      }
+    }
+    setTableData(
+      Object.values(memoResultsGrouped)
+        .map((group) => Object.values(group))
+        .flat()
+        .map((result) => ({
+          ...result,
+          estimatedTimeSaved: Number((result.estimatedTimeSaved * 1000).toFixed(6)),
+          memoizationScore: Number(result.memoizationScore.toFixed(6))
+        }))
+    )
     setMemoResults(
       memoizationData.map((result) => ({
         ...result,
@@ -178,14 +239,14 @@ export const DataProvider = ({ children }: any) => {
       setNodesDataArray(gridNodes)
       setLinksDataArray(undefined)
     }
-    console.log(JSON.stringify(treeLinks))
   }
 
   return (
     <DataContext.Provider
       value={{
+        codeBeforeAnalysis,
         data,
-        memoResults,
+        tableData,
         runCode,
         ref,
         nodesDataArray,

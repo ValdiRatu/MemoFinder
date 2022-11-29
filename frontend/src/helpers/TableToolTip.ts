@@ -21,12 +21,16 @@ export class TableToolTip extends go.Adornment {
     column: number,
     text?: string,
     textBinding?: string,
-    conv?: go.TargetConversion
+    conv?: go.TargetConversion,
+    columnSpan = 1,
+    rowSpan = 1
   ) {
     const textBlock = new go.TextBlock({
       margin: 5,
       row,
-      column
+      column,
+      rowSpan,
+      columnSpan
     })
 
     if (text) {

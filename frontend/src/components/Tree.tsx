@@ -23,17 +23,20 @@ export const Tree = () => {
       // DOCS: https://gojs.net/latest/intro/buildingObjects.html
       nodeTemplate: new go.Node('Auto', {
         toolTip: new TableToolTip('Auto')
-          .addCell(0, 0, 'time')
-          .addCell(0, 1, undefined, 'time', (time) => `${time} ms`)
-          .addCell(1, 0, 'return value')
-          .addCell(1, 1, undefined, 'returnValue', (rv) => (rv !== null ? rv : '-'))
+          .addCell(0, 0, undefined, 'label', undefined, 2)
+          .addCell(1, 0, 'time')
+          .addCell(1, 1, undefined, 'time', (time) => `${time} ms`)
+          .addCell(2, 0, 'return value')
+          .addCell(2, 1, undefined, 'returnValue', (rv) => (rv !== null ? rv : '-'))
       })
         .add(new go.Shape('Rectangle', { strokeWidth: 1 }).bind(new go.Binding('fill', 'color')))
         .add(
           new go.TextBlock({
             margin: 10,
             font: 'bold 14px sans-serif',
-            stroke: '#333'
+            stroke: '#333',
+            wrap: go.TextBlock.WrapFit,
+            width: 200
           }).bind('text', 'label')
         ),
       linkTemplate: new go.Link({

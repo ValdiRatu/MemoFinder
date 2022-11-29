@@ -29,10 +29,11 @@ export const Grid = () => {
       // DOCS: https://gojs.net/latest/extensionsJSM/PackedLayout.html
       nodeTemplate: new go.Node('Auto', {
         toolTip: new TableToolTip('Auto')
-          .addCell(0, 0, 'time')
-          .addCell(0, 1, undefined, 'totalTime', (time) => `${time} ms`)
-          .addCell(1, 0, '# calls')
-          .addCell(1, 1, undefined, 'numCalls')
+          .addCell(0, 0, undefined, 'label', undefined, 2)
+          .addCell(1, 0, 'time')
+          .addCell(1, 1, undefined, 'totalTime', (time) => `${time} ms`)
+          .addCell(2, 0, '# calls')
+          .addCell(2, 1, undefined, 'numCalls')
       })
         .add(
           new go.Shape({ strokeWidth: 0 })
@@ -44,8 +45,14 @@ export const Grid = () => {
           new go.TextBlock({
             margin: 10,
             font: 'bold 14px sans-serif',
-            stroke: '#333'
-          }).bind('text', 'label')
+            stroke: '#333',
+            wrap: go.TextBlock.WrapFit,
+            textAlign: 'center',
+            verticalAlignment: go.Spot.Center
+          })
+            .bind('text', 'label')
+            .bind('width', 'width')
+            .bind('height', 'height')
         )
     })
 

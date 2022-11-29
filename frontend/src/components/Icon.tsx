@@ -10,6 +10,7 @@ interface IconProps extends icons.IconProps {
   onClick?: () => void
   buttonClassname?: string
   active?: boolean
+  disabled?: boolean
 }
 
 export const Icon = ({
@@ -19,6 +20,7 @@ export const Icon = ({
   onClick,
   buttonClassname,
   active = false,
+  disabled = false,
   ...props
 }: IconProps) => {
   const BootstrapIcon = icons[iconName]
@@ -29,6 +31,7 @@ export const Icon = ({
       onClick={onClick}
       className={`${buttonClassname} pb-2`}
       active={active}
+      disabled={disabled}
     >
       <BootstrapIcon {...props} />
     </Button>
