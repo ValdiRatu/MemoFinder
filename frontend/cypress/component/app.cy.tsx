@@ -34,13 +34,13 @@ describe('App Integration Tests', () => {
     })
   }
 
-  const checkForNoTODOs = () => {
+  const checkForNoComments = () => {
     cy.get('.monaco-editor textarea:first')
       .invoke('val')
       .then((code) => {
         if (typeof code === 'string') {
-          // check that the starter code line DOES NOT HAVE a TODO
-          expect(code.includes('# TODO')).to.be.false
+          // check that the starter code lines DO NOT HAVE comments
+          expect(code.includes('#')).to.be.false
         } else {
           throw new Error('code is not a string')
         }
@@ -125,8 +125,8 @@ describe('App Integration Tests', () => {
       })
     })
 
-    it('should add a TODO on the correct line', () => {
-      checkForNoTODOs()
+    it('should add comments on correct lines', () => {
+      checkForNoComments()
       runCode()
 
       cy.get('.monaco-editor textarea:first')
@@ -134,9 +134,10 @@ describe('App Integration Tests', () => {
         .then((code) => {
           if (typeof code === 'string') {
             const lines = code.split('\n')
-            // check that the 4th line HAS a TODO
+            // check that the 4th and 5th lines HAVE comments
             // this indicates that our memoization algorithm worked
-            expect(lines[3].includes('# TODO')).to.be.true
+            expect(lines[3].includes('#')).to.be.true
+            expect(lines[4].includes('#')).to.be.true
           } else {
             throw new Error('code is not a string')
           }
@@ -200,9 +201,9 @@ describe('App Integration Tests', () => {
       })
     })
 
-    it('should add a TODO on the correct line', () => {
+    it('should add comments on correct lines', () => {
       typeCode()
-      checkForNoTODOs()
+      checkForNoComments()
       runCode()
 
       cy.get('.monaco-editor textarea:first')
@@ -210,9 +211,10 @@ describe('App Integration Tests', () => {
         .then((code) => {
           if (typeof code === 'string') {
             const lines = code.split('\n')
-            // check that the 6th line HAS a TODO
+            // check that the 6th and 7th lines HAVE comments
             // this indicates that our memoization algorithm worked
-            expect(lines[5].includes('# TODO')).to.be.true
+            expect(lines[5].includes('#')).to.be.true
+            expect(lines[6].includes('#')).to.be.true
           } else {
             throw new Error('code is not a string')
           }
