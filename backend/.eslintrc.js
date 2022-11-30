@@ -18,6 +18,7 @@ module.exports = {
   },
   plugins: ['@typescript-eslint', 'prettier', 'simple-import-sort'],
   rules: {
+    'no-nested-ternary': 'off',
     'no-continue': 'off',
     'no-restricted-syntax': 'off',
     'no-shadow': 'off',

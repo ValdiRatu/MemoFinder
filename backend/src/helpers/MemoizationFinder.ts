@@ -98,7 +98,7 @@ export class MemoizationFinder {
       }
       results.push({
         signature,
-        lineNumbers: Object.keys(lineNumbersToNumCalled).map((line) => parseInt(line)),
+        lineNumbers: Object.keys(lineNumbersToNumCalled).map((line) => parseInt(line, 10)),
         numCalled,
         estimatedTimeSaved,
         memoizationScore
@@ -150,6 +150,6 @@ export class MemoizationFinder {
   private static getProbabilityRelativeIncreaseGivenMemoized(relativeIncrease: number): number {
     const probability = Math.min(1, 1.5 * Math.log(relativeIncrease))
     // if probability is 0 or 1 it will cause the whole conditional probability to be 0 so we smooth it out a bit
-    return probability <= 0 ? 0.01 : probability >=1 ? 0.99 : probability
+    return probability <= 0 ? 0.01 : probability >= 1 ? 0.99 : probability
   }
 }
