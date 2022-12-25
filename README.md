@@ -2,6 +2,7 @@
 made by [Valdi Ratu](https://github.com/ValdiRatu), [Kobe Li](https://github.com/kobili), [Asad Dhorajiwala](https://github.com/AnimeAllstar), [Akim Ruslanov](https://github.com/akim-ruslanov), [Alex Fan](https://github.com/azurespear)
 
 # MemoFinder
+[Video demonstration](https://www.youtube.com/watch?v=WH0d1o7KucU&ab_channel=Valdi)
 
 [Wiki](https://github.students.cs.ubc.ca/CPSC410-2022W-T1/Project2Group2/wiki)
 
