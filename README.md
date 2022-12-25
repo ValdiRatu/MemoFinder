@@ -1,3 +1,6 @@
+# UBC CPSC 410 project 2
+made by [Valdi Ratu](https://github.com/ValdiRatu), [Kobe Li](https://github.com/kobili), [Asad Dhorajiwala](https://github.com/AnimeAllstar), [Akim Ruslanov](https://github.com/akim-ruslanov), [Alex Fan](https://github.com/azurespear)
+
 # MemoFinder
 
 [Wiki](https://github.students.cs.ubc.ca/CPSC410-2022W-T1/Project2Group2/wiki)
